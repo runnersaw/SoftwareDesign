@@ -1,0 +1,3 @@
+Sawyer Vaughan and Griffin Tschurwald present: Olin Dodgeball.
+
+In order to run the game, you must have all the appropriate modules installed. These can be found at the start of the function. Once those are all installed, simply open up python code and run it. You need to be running the code from the same directory as all the other files. The game will will start when you run the program. Once in, instructions will appear onscreen to follow. The goal of the game is to knock your opponents out while avoiding their throws. At the end of each game, you'll have the option to play again or quit. Have fun!
