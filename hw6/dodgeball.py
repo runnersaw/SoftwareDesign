@@ -25,7 +25,7 @@ def game():
     playerSize = (80,60) #size of the player sprites
     cooldownTime = 500 # in ms, the time before computers can throw again
     userCooldown = 1500 #in ms, the time before the user can throw again
-    ballSpeed = 3 # in pixels per ms, speed of balls
+    ballSpeed = 3.5 # in pixels per ms, speed of balls
     ballRadius = 10 #in pixels
     AIrefresh = 100 # in milliseconds, time before they switch directions
     userSpeed = 1.5 # in pixels per ms, speed of user
@@ -174,9 +174,9 @@ def game():
     class Model:
         ''' This class is the model for our dodgeball game. It encodes all the information such as the locations and velocities of all the elements in the game '''
         def __init__(self, playAgain=0):
-            self.opponent1 = CPU(1*size[1]/20,size[0]*randint(1,3)/4)
-            self.opponent2 = CPU(3*size[1]/20,size[0]*randint(1,3)/4)
-            self.opponent3 = CPU(5*size[1]/20,size[0]*randint(1,3)/4)
+            self.opponent1 = CPU(1*size[1]/20,size[0]*randint(1,6)/7)
+            self.opponent2 = CPU(3*size[1]/20,size[0]*randint(1,6)/7)
+            self.opponent3 = CPU(5*size[1]/20,size[0]*randint(1,6)/7)
             self.user = User(7*size[1]/8)
             self.victory = 0
             self.playAgain=playAgain
@@ -193,16 +193,19 @@ def game():
             #this section detects collisions
             if (self.user.px-ballRadius)<= self.opponent1.ball.px <=(self.user.px+playerSize[0]+ballRadius):
                 if (self.user.py-ballRadius)<= self.opponent1.ball.py <=(self.user.py+playerSize[1]+ballRadius):
-                    self.user.collision()
-                    self.opponent1.ball.collision()
+                    if self.opponent1.alive == 1:
+                        self.user.collision()
+                        self.opponent1.ball.collision()
             if (self.user.px-ballRadius)<= self.opponent2.ball.px <=(self.user.px+playerSize[0]+ballRadius):
                 if (self.user.py-ballRadius)<= self.opponent2.ball.py <=(self.user.py+playerSize[1]+ballRadius):
-                    self.user.collision()
-                    self.opponent2.ball.collision()
+                    if self.opponent2.alive == 1:
+                        self.user.collision()
+                        self.opponent2.ball.collision()
             if (self.user.px-ballRadius)<= self.opponent3.ball.px <=(self.user.px+playerSize[0]+ballRadius):
                 if (self.user.py-ballRadius)<= self.opponent3.ball.py <=(self.user.py+playerSize[1]+ballRadius):
-                    self.user.collision()
-                    self.opponent3.ball.collision()
+                    if self.opponent3.alive == 1:
+                        self.user.collision()
+                        self.opponent3.ball.collision()
             if self.opponent1.alive == 1:
                 if (self.opponent1.px-ballRadius)<= self.user.ball.px <=(self.opponent1.px+playerSize[0]+ballRadius):
                     if (self.opponent1.py-ballRadius)<= self.user.ball.py <=(self.opponent1.py+playerSize[1]+ballRadius):
@@ -324,13 +327,17 @@ def game():
                     self.model.playAgain = -1
             elif event.type == KEYUP:
                 if event.key == pygame.K_RIGHT:
-                    self.model.user.vx = 0
+                    if self.model.user.vx >0:
+                        self.model.user.vx = 0
                 if event.key == pygame.K_LEFT:
-                    self.model.user.vx = 0
+                    if self.model.user.vx <0:
+                        self.model.user.vx = 0
                 if event.key == pygame.K_UP:
-                    self.model.user.vy = 0
+                    if self.model.user.vy <0:
+                        self.model.user.vy = 0
                 if event.key == pygame.K_DOWN:
-                    self.model.user.vy = 0
+                    if self.model.user.vy >0:
+                        self.model.user.vy = 0
             
       
     
@@ -372,7 +379,7 @@ def game():
         screen.blit(msgSurfaceObj, msgRectObj)
         
         pygame.display.update()         
-        time.sleep(.012)
+        time.sleep(.008)
     
     cam = pygame.camera.Camera("/dev/video0",(20,20))
     cam.start()
@@ -387,6 +394,12 @@ def game():
     msgRectObj = screen.get_rect()
     msgRectObj.topleft = (10,200)
     screen.blit(msgSurfaceObj, msgRectObj)
+    fontObj = pygame.font.Font('freesansbold.ttf', 20)
+    msg = 'Dodge their balls while hitting them with yours'
+    msgSurfaceObj = fontObj.render(msg, False, (255,0,0))
+    msgRectObj = screen.get_rect()
+    msgRectObj.topleft = (10,300)
+    screen.blit(msgSurfaceObj, msgRectObj)
     fontObj = pygame.font.Font('freesansbold.ttf', 32)
     msg = 'Pick up the balls on your side of the court to reload'
     msgSurfaceObj = fontObj.render(msg, False, (255,0,0))
@@ -395,7 +408,7 @@ def game():
     screen.blit(msgSurfaceObj, msgRectObj)
     
     pygame.display.update()        
-    time.sleep(4)
+    time.sleep(5)
     
     #this section plays a start sound
     num = randint(0, len(startSounds)-1)
