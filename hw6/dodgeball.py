@@ -54,6 +54,7 @@ def game():
         def collision(self):
             self.alive = 0 #makes the ball not display
             self.vy = 0 #makes the ball not collide with anything else
+            self.py = -10 
                 
     class CPU:
         ''' This class encodes all the information for a single person. This person may be the user or an AI. '''

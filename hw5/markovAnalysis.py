@@ -130,4 +130,4 @@ def main_markov(filename, n, order):
 
 if __name__ == '__main__':
     tweets_to_text('kellyoxford')
-    main_markov('tweets.txt', 30,1)
+    main_markov('tweets.txt', 30, 2)

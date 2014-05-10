@@ -131,7 +131,7 @@ if __name__ == '__main__':
         word limit is reached
     """
     num_words_to_check = 2000
-    make_plot = False
+    make_plot = True
     if not(make_plot):
         spell_check(1,num_words_to_check)
     else:
