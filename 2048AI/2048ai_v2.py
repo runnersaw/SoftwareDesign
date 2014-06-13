@@ -60,9 +60,9 @@ class Model:
 	def is_valid_move_right(self):
 		for i in range(4):
 			for j in range(3):
-				if self.get_tile_from_position(i+1, j+1) != None and self.get_tile_from_position(i+1, j+2) == None:
+				if self.get_tile_from_position(i+1, j+1) != None and self.get_tile_from_position(i+1, j+2) == None: #get tile to the right, valid if there is a blank space next to tile
 					return True
-				if self.get_tile_from_position(i+1, j+1) != None and self.get_tile_from_position(i+1, j+2) != None:
+				if self.get_tile_from_position(i+1, j+1) != None and self.get_tile_from_position(i+1, j+2) != None: #get tile next to, valid if they're equal
 					if self.get_tile_from_position(i+1, j+1).value == self.get_tile_from_position(i+1, j+2).value:
 						return True
 		return False
@@ -70,9 +70,9 @@ class Model:
 	def is_valid_move_left(self):
 		for i in range(4):
 			for j in range(3):
-				if self.get_tile_from_position(i+1, 4-j) != None and self.get_tile_from_position(i+1, 3-j) == None:
+				if self.get_tile_from_position(i+1, 4-j) != None and self.get_tile_from_position(i+1, 3-j) == None: #get tile to the right, valid if there is a blank space next to tile
 					return True
-				if self.get_tile_from_position(i+1, 4-j) != None and self.get_tile_from_position(i+1, 3-j) != None:
+				if self.get_tile_from_position(i+1, 4-j) != None and self.get_tile_from_position(i+1, 3-j) != None: #get tile next to, valid if they're equal
 					if self.get_tile_from_position(i+1, 4-j).value == self.get_tile_from_position(i+1, 3-j).value:
 						return True
 		return False
@@ -80,9 +80,9 @@ class Model:
 	def is_valid_move_up(self):
 		for i in range(4):
 			for j in range(3):
-				if self.get_tile_from_position(4-j, i+1) != None and self.get_tile_from_position(3-j, i+1) == None:
+				if self.get_tile_from_position(4-j, i+1) != None and self.get_tile_from_position(3-j, i+1) == None: #get tile to the right, valid if there is a blank space next to tile
 					return True
-				if self.get_tile_from_position(4-j, i+1) != None and self.get_tile_from_position(3-j, i+1) != None:
+				if self.get_tile_from_position(4-j, i+1) != None and self.get_tile_from_position(3-j, i+1) != None: #get tile next to, valid if they're equal
 					if self.get_tile_from_position(4-j, i+1).value == self.get_tile_from_position(3-j, i+1).value:
 						return True
 		return False
@@ -90,9 +90,9 @@ class Model:
 	def is_valid_move_down(self):
 		for i in range(4):
 			for j in range(3):
-				if self.get_tile_from_position(j+1, i+1) != None and self.get_tile_from_position(j+2, i+1) == None:
+				if self.get_tile_from_position(j+1, i+1) != None and self.get_tile_from_position(j+2, i+1) == None: #get tile to the right, valid if there is a blank space next to tile
 					return True
-				if self.get_tile_from_position(j+1, i+1) != None and self.get_tile_from_position(j+2, i+1) != None:
+				if self.get_tile_from_position(j+1, i+1) != None and self.get_tile_from_position(j+2, i+1) != None: #get tile next to, valid if they're equal
 					if self.get_tile_from_position(j+1, i+1).value == self.get_tile_from_position(j+2, i+1).value:
 						return True
 		return False
@@ -294,13 +294,12 @@ class AIcontroller:
 		scoreWeights = {1:1, 2:1, 3:.5, 4:.2}
 		scores = {'right':0, 'left':0, 'up':0,'down':0}
 		for depth in scoreWeights:
-			y = self.make_all_child_nodes(self.model,depth,depth)
-			z = self.convert_dictionary_of_models_to_scores(y)
-			a = self.flatten_dictionary_of_scores(z)
+			modelDict = self.make_all_child_nodes(self.model,depth,depth)
+			scoreDict = self.convert_dictionary_of_models_to_scores(modelDict)
+			scores_for_certain_depth = self.flatten_dictionary_of_scores(scoreDict)
 			for key in a:
-				scores[key] += scoreWeights[depth]*a[key]
+				scores[key] += scoreWeights[depth]*scores_for_certain_depth[key]
 		direction = self.find_max_dictionary_value(scores)
-		print 
 		if direction in self.get_valid_moves(self.model):
 			if direction == 'up':
 				self.model.update_up()
@@ -314,7 +313,6 @@ class AIcontroller:
 			if direction == 'left':
 				self.model.update_left()
 				self.model.generate_tile()
-
 
 	def get_valid_moves(self, model):
 		moves = []
@@ -427,12 +425,10 @@ class AIcontroller:
 			score += model.get_tile_from_position(1,3).value/4.0
 		if model.get_tile_from_position(1,4) != None:
 			score += model.get_tile_from_position(1,4).value/8.0
-			'''
-		if model.get_tile_from_position(2,4) != None:
-			score += model.get_tile_from_position(2,4).value/16.0
-		if model.get_tile_from_position(2,3) != None:
-			score += model.get_tile_from_position(2,3).value/32.0
-			'''
+			if model.get_tile_from_position(2,4) != None: #only care about 5th tile if 4th tile exists
+				score += model.get_tile_from_position(2,4).value/16.0
+			if model.get_tile_from_position(2,3) != None:
+				score += model.get_tile_from_position(2,3).value/32.0
 		return score
 
 	def board_evaluation_function_high_depth(self, model):
