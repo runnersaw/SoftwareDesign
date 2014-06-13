@@ -11,6 +11,7 @@ class Model:
 		self.rows = Rows()
 		self.nodeDictionary = nodeList
 		self.reorganize_nodes()
+		self.nodeLocations = {1: 5}
 
 	def reorganize_nodes(self):
 		for i in range(len(self.nodeDictionary)):
@@ -112,7 +113,7 @@ class Model:
 			return False
 		return True
 
-	def place_node(self):
+	def place_node(self, nodeNumber):
 		pass
 
 	def update_node_dictionary(self):

@@ -1,0 +1,1 @@
+{'hey bud': 'hey', 'heyo': 'hello', u"what's going on": u'nothing at all', 'muffin': 'lolz', 'hey': 'hello', u"what's up": u'nothing much how are you', 'foo': 'kitty', 'hello': 'hey'}

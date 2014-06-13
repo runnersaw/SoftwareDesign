@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head></head>
+<body>
+	{% for post in unanswered %}
+    <form method='post' action='/help_redirect/{{post}}'>
+		<table style="margin-bottom:1em">
+			<tr>
+				<td style="width:15em">
+					{{post}}
+				</td>				
+				<td>
+					<input type="text" placeholder="Suggestion" name="{{post}}" id="searchkey" required>
+				</td>
+				<td>
+					<INPUT type="submit" value="Submit">
+				</td>
+			</tr>
+		</table>
+	</form>
+	{% endfor %}
+  </body>
+</html>

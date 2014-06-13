@@ -1,0 +1,10 @@
+'''
+2048 AI implementation 
+
+author: Sawyer and Chris
+'''
+
+
+import pygame
+
+def rowCollapse(list_of_numbers):
