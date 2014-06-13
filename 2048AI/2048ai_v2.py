@@ -292,12 +292,15 @@ class AIcontroller:
 
 	def move(self):
 		scoreWeights = {1:1, 2:1, 3:.5, 4:.2}
-		scores = {'right':0, 'left':0, 'up':0,'down':0}
+		scores = {}
+		valid_directions = self.get_valid_moves(self.model)
+		for direction in valid_directions:
+			scores[direction] = 0
 		for depth in scoreWeights:
 			modelDict = self.make_all_child_nodes(self.model,depth,depth)
 			scoreDict = self.convert_dictionary_of_models_to_scores(modelDict)
 			scores_for_certain_depth = self.flatten_dictionary_of_scores(scoreDict)
-			for key in a:
+			for key in scores_for_certain_depth:
 				scores[key] += scoreWeights[depth]*scores_for_certain_depth[key]
 		direction = self.find_max_dictionary_value(scores)
 		if direction in self.get_valid_moves(self.model):
@@ -425,10 +428,6 @@ class AIcontroller:
 			score += model.get_tile_from_position(1,3).value/4.0
 		if model.get_tile_from_position(1,4) != None:
 			score += model.get_tile_from_position(1,4).value/8.0
-			if model.get_tile_from_position(2,4) != None: #only care about 5th tile if 4th tile exists
-				score += model.get_tile_from_position(2,4).value/16.0
-			if model.get_tile_from_position(2,3) != None:
-				score += model.get_tile_from_position(2,3).value/32.0
 		return score
 
 	def board_evaluation_function_high_depth(self, model):
