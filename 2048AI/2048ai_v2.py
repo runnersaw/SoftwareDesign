@@ -19,6 +19,32 @@ class Tile:
 		self.column = column
 		self.value = value
 
+	def get_color(self):
+		color = (255,255,255)
+		if self.value == 4:
+			color = (255,255,255)
+		if self.value == 8:
+			color = (235,255,255)
+		if self.value == 16:
+			color = (215,255,255)
+		if self.value == 32:
+			color = (195,255,255)
+		if self.value == 64:
+			color = (175,255,255)
+		if self.value == 128:
+			color = (155,255,255)
+		if self.value == 256:
+			color = (135,255,255)
+		if self.value == 512:
+			color = (115,255,255)
+		if self.value == 1024:
+			color = (95,255,255)
+		if self.value == 2048:
+			color = (75,255,255)
+		if self.value == 4096:
+			color = (55,255,255)
+		return color
+
 def convert_list_to_tiles(list_of_numbers):
 	tiles = []
 	for i in range(len(list_of_numbers)):
@@ -50,6 +76,13 @@ class Model:
 			self.tiles = []
 			self.generate_tile()
 			self.generate_tile()
+
+	def get_max_tile(self):
+		mx = 0
+		for tile in self.tiles:
+			if tile.value > mx:
+				mx = tile.value
+		return mx
 
 	def get_tile_from_position(self, row, column):
 		for tile in self.tiles:
@@ -253,37 +286,54 @@ class View:
     		self.draw_tile(tile)
 
     def draw_square(self, tile):
-    	color = (255,255,255)
+    	color = tile.get_color()
         pos = (size[0]/4.0*(tile.column-1), size[1]/4.0*(tile.row-1))
         pygame.draw.rect(self.screen, color, (pos[0], pos[1], size[0]/4.0, size[1]/4.0))
 
     def draw_tile(self, tile):
-	    pos = (size[0]/4.0*(tile.column-1), size[1]/4.0*(tile.row-1))
-	    fontObj = pygame.font.Font('freesansbold.ttf', 32)
-	    msg = str(tile.value)
-	    msgSurfaceObj = fontObj.render(msg, False, (0,0,0))
-	    msgRectObj = self.screen.get_rect()
-	    msgRectObj.topleft = pos
-	    screen.blit(msgSurfaceObj, msgRectObj)
+    	color = tile.get_color()
+    	pos = (size[0]/4.0*(tile.column-1), size[1]/4.0*(tile.row-1))
+    	fontObj = pygame.font.Font('freesansbold.ttf', 32)
+    	msg = str(tile.value)
+    	msgSurfaceObj = fontObj.render(msg, False, (0,0,0))
+    	msgRectObj = self.screen.get_rect()
+    	msgRectObj.topleft = pos
+    	screen.blit(msgSurfaceObj, msgRectObj)
 
 class Controller:
 	def __init__(self, model):
 		self.model = model
 
+	def get_valid_moves(self, model):
+		moves = []
+		if model.is_valid_move_up():
+			moves.append('up')
+		if model.is_valid_move_down():
+			moves.append('down')
+		if model.is_valid_move_right():
+			moves.append('right')
+		if model.is_valid_move_left():
+			moves.append('left')
+		return moves
+
 	def handle_pygame_event(self, event):
             if event.type == KEYDOWN:
                 if event.key == pygame.K_UP:
-                    self.model.update_up()
-                    self.model.generate_tile()
+                	if 'up' in self.get_valid_moves(self.model):
+	                    self.model.update_up()
+	                    self.model.generate_tile()
                 if event.key == pygame.K_DOWN:
-                    self.model.update_down()
-                    self.model.generate_tile()
+                	if 'down' in self.get_valid_moves(self.model):
+	                    self.model.update_down()
+	                    self.model.generate_tile()
                 if event.key == pygame.K_RIGHT:
-                    self.model.update_right()
-                    self.model.generate_tile()
+                	if 'right' in self.get_valid_moves(self.model):
+	                    self.model.update_right()
+	                    self.model.generate_tile()
                 if event.key == pygame.K_LEFT:
-                    self.model.update_left()
-                    self.model.generate_tile()
+                	if 'left' in self.get_valid_moves(self.model):
+		                self.model.update_left()
+		                self.model.generate_tile()
 
 
 class AIcontroller:
@@ -291,7 +341,7 @@ class AIcontroller:
 		self.model = model
 
 	def move(self):
-		scoreWeights = {1:1, 2:1, 3:.5, 4:.2}
+		scoreWeights = {1:1.1, 2:1, 3:.5, 4:.2}
 		scores = {}
 		valid_directions = self.get_valid_moves(self.model)
 		for direction in valid_directions:
@@ -385,7 +435,7 @@ class AIcontroller:
 				output.append(self.convert_dictionary_of_models_to_scores(entry))
 			return output
 		if isinstance(dictionary, Model):
-			return self.board_evaluation_function_high_depth(dictionary)
+			return self.board_evaluation_function(dictionary)
 
 	def flatten_dictionary_of_scores(self,dictionary):
 		if isinstance(dictionary, dict):
@@ -428,6 +478,8 @@ class AIcontroller:
 			score += model.get_tile_from_position(1,3).value/4.0
 		if model.get_tile_from_position(1,4) != None:
 			score += model.get_tile_from_position(1,4).value/8.0
+		k=self.model.get_max_tile()/20.0
+		score -= k*len(model.tiles)
 		return score
 
 	def board_evaluation_function_high_depth(self, model):
