@@ -478,7 +478,7 @@ class AIcontroller:
 			score += model.get_tile_from_position(1,3).value/4.0
 		if model.get_tile_from_position(1,4) != None:
 			score += model.get_tile_from_position(1,4).value/8.0
-		k=self.model.get_max_tile()/20.0
+		k=self.model.get_max_tile()/30.0
 		score -= k*len(model.tiles)
 		return score
 
